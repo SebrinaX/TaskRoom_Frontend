@@ -1,6 +1,7 @@
 {
   "name": "taskroom-server-client",
   "version": "0.1.0",
+  "proxy": "https://taskroombackend-6xdzzyp9.b4a.run",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
