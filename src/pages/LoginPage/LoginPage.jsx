@@ -1,89 +1,89 @@
-import React, { useEffect, useState } from 'react'
-import { TextField, Container, Alert, Snackbar } from '@mui/material'
-import Button from '@mui/material/Button'
-import Box from '@mui/material/Box'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { login } from '../../API/login'
-import { useDispatch, useSelector } from 'react-redux'
-import { login as loginAction } from '../../store/authSlice'
-import VerifyEmailButton from '../../components/VerifyEmailButton'
+import React, { useEffect, useState } from "react";
+import { TextField, Container, Alert, Snackbar } from "@mui/material";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { login } from "../../API/login";
+import { useDispatch, useSelector } from "react-redux";
+import { login as loginAction } from "../../store/authSlice";
+import VerifyEmailButton from "../../components/VerifyEmailButton";
 
 const LoginPage = () => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const userState = useSelector((state) => state.auth)
+  const userState = useSelector((state) => state.auth);
 
-  const [verifyEmailAlertOpen, setVerifyEmailAlertOpen] = useState(false)
-  const [verifyEmailButtonOpen, setVerifyEmailButtonOpen] = useState(false)
+  const [verifyEmailAlertOpen, setVerifyEmailAlertOpen] = useState(false);
+  const [verifyEmailButtonOpen, setVerifyEmailButtonOpen] = useState(false);
 
   const [formValues, setFormValues] = useState({
     email: location.state?.email,
-    password: '',
-  })
+    password: "",
+  });
 
   const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-  })
+    email: "",
+    password: "",
+  });
 
-  const isAuthenticated = userState.isAuthenticated
+  const isAuthenticated = userState.isAuthenticated;
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/')
+      navigate("/");
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
   const validateForm = () => {
-    let valid = true
-    const newErrors = { ...errors }
+    let valid = true;
+    const newErrors = { ...errors };
 
     if (!formValues.email) {
-      newErrors.email = 'Email is required'
-      valid = false
+      newErrors.email = "Email is required";
+      valid = false;
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
-      newErrors.email = 'Email is invalid'
-      valid = false
+      newErrors.email = "Email is invalid";
+      valid = false;
     } else {
-      newErrors.email = ''
+      newErrors.email = "";
     }
 
     if (!formValues.password) {
-      newErrors.password = 'Password is required'
-      valid = false
+      newErrors.password = "Password is required";
+      valid = false;
     } else {
-      newErrors.password = ''
+      newErrors.password = "";
     }
 
-    setErrors(newErrors)
-    return valid
-  }
+    setErrors(newErrors);
+    return valid;
+  };
 
   const handleOnSubmit = async (event) => {
-    event.preventDefault()
-    const isValid = validateForm()
-    if (!isValid) return
+    event.preventDefault();
+    const isValid = validateForm();
+    if (!isValid) return;
     try {
-      const response = await login(formValues)
-      dispatch(loginAction(response.data))
+      const response = await login(formValues);
+      dispatch(loginAction(response.data));
     } catch (error) {
-      const err = error.response
-      if (err.status === 401 && err.data.message === 'Email not verified') {
-        setVerifyEmailButtonOpen(true)
-        setVerifyEmailAlertOpen(true)
+      const err = error.response;
+      if (err.status === 401 && err.data.message === "Email not verified") {
+        setVerifyEmailButtonOpen(true);
+        setVerifyEmailAlertOpen(true);
       }
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleOnChange = (event) => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
     setFormValues({
       ...formValues,
       [name]: value,
-    })
-  }
+    });
+  };
 
   return (
     <Box
@@ -91,13 +91,15 @@ const LoginPage = () => {
       justifyContent="center"
       alignItems="center"
       minHeight="100vh"
-      bgcolor="#ffffff">
+      bgcolor="#ffffff"
+    >
       <Snackbar
         open={verifyEmailAlertOpen}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         autoHideDuration={5000}
-        onClose={() => setVerifyEmailAlertOpen(false)}>
-        <Alert severity={'error'}>
+        onClose={() => setVerifyEmailAlertOpen(false)}
+      >
+        <Alert severity={"error"}>
           Your email address hasn&apos;t been verified. <br />
           Please click the button below and verify through the link sent to your
           email
@@ -106,12 +108,13 @@ const LoginPage = () => {
       <Container
         maxWidth="sm"
         sx={{
-          borderRadius: '3px',
-          padding: '25px 40px',
-          boxShadow: 'rgba(0,0,0,0.1) 0 0 10px',
-        }}>
+          borderRadius: "3px",
+          padding: "25px 40px",
+          boxShadow: "rgba(0,0,0,0.1) 0 0 10px",
+        }}
+      >
         <form onSubmit={handleOnSubmit}>
-          <h2 style={{ textAlign: 'center', fontSize: '45px' }}>Login</h2>
+          <h2 style={{ textAlign: "center", fontSize: "45px" }}>Login</h2>
           <TextField
             label="Email"
             variant="outlined"
@@ -144,26 +147,39 @@ const LoginPage = () => {
               color="primary"
               type="submit"
               fullWidth
-              style={{ margin: '25px auto' }}>
+              style={{ margin: "25px auto 10px" }}
+            >
               Login
             </Button>
           )}
+          <p style={{ textAlign: "center", fontSize: "20px" }}>or</p>
+          <Button
+            variant="contained"
+            color="primary"
+            component={Link}
+            fullWidth
+            to="/login/federated/google"
+            style={{ margin: "10px auto" }}
+          >
+            Sign in with Google
+          </Button>
 
-          <p style={{ textAlign: 'center' }}>
+          <p style={{ textAlign: "center" }}>
             <span>Not a member?</span>
             <Button
               component={Link}
               to="/register"
               variant="outlined"
               size="small"
-              style={{ marginLeft: '10px' }}>
+              style={{ marginLeft: "10px" }}
+            >
               Register
             </Button>
           </p>
         </form>
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;
